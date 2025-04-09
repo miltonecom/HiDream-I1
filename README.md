@@ -26,8 +26,10 @@ We offer both the full version and distilled models. For more information about 
 
 ## Quick Start
 Please make sure you have installed [Flash Attention](https://github.com/Dao-AILab/flash-attention). We recommend CUDA versions 12.4 for the manual installation.
-```
+
+```sh
 pip install -r requirements.txt
+pip install -U flash-attn --no-build-isolation
 ```
 
 Then you can run the inference scripts to generate images:
@@ -42,7 +44,9 @@ python ./inference.py --model_type dev
 # For distilled fast model inference
 python ./inference.py --model_type fast
 ```
-> **Note:** The inference script will automatically download `meta-llama/Meta-Llama-3.1-8B-Instruct` model files. If you encounter network issues, you can download these files ahead of time and place them in the appropriate cache directory to avoid download failures during inference.
+
+> [!NOTE]
+> The inference script will try to automatically download `meta-llama/Llama-3.1-8B-Instruct` model files. You need to [agree to the license of the Llama model](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct) on your HuggingFace account and login using `huggingface-cli login` in order to use the automatic downloader.
 
 ## Gradio Demo
 
