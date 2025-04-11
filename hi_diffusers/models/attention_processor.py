@@ -3,12 +3,18 @@ import torch
 from .attention import HiDreamAttention
 
 try:
-    from flash_attn_interface import flash_attn_func
-    USE_FLASH_ATTN3 = True
+    try:
+        from flash_attn_interface import flash_attn_func
+        USE_FLASH_ATTN3 = True
+    except:
+        from flash_attn import flash_attn_func
+        USE_FLASH_ATTN3 = False
+    USE_VANILLA_ATTN = False
 except:
-    from flash_attn import flash_attn_func
+    import torch.nn.functional as F
+    print("No flash attention available, use vanilla attention")
     USE_FLASH_ATTN3 = False
-
+    USE_VANILLA_ATTN = True
 # Copied from https://github.com/black-forest-labs/flux/blob/main/src/flux/math.py
 def apply_rope(xq: torch.Tensor, xk: torch.Tensor, freqs_cis: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
     xq_ = xq.float().reshape(*xq.shape[:-1], -1, 1, 2)
@@ -20,6 +26,8 @@ def apply_rope(xq: torch.Tensor, xk: torch.Tensor, freqs_cis: torch.Tensor) -> t
 def attention(query: torch.Tensor, key: torch.Tensor, value: torch.Tensor):
     if USE_FLASH_ATTN3:
         hidden_states = flash_attn_func(query, key, value, causal=False, deterministic=False)[0]
+    elif USE_VANILLA_ATTN:
+        hidden_states = F.scaled_dot_product_attention(query, key, value, dropout_p=0.0, is_causal=False)
     else:
         hidden_states = flash_attn_func(query, key, value, dropout_p=0., causal=False)
     hidden_states = hidden_states.flatten(-2)
