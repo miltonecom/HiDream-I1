@@ -49,7 +49,7 @@ RESOLUTION_OPTIONS = [
 def load_models(model_type):
     config = MODEL_CONFIGS[model_type]
     pretrained_model_name_or_path = config["path"]
-    scheduler = FlowUniPCMultistepScheduler(num_train_timesteps=1000, shift=config["shift"], use_dynamic_shifting=False)
+    scheduler = MODEL_CONFIGS[model_type]["scheduler"](num_train_timesteps=1000, shift=config["shift"], use_dynamic_shifting=False)
     
     tokenizer_4 = PreTrainedTokenizerFast.from_pretrained(
         LLAMA_MODEL_NAME,
