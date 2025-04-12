@@ -27,7 +27,7 @@ def attention(query: torch.Tensor, key: torch.Tensor, value: torch.Tensor):
     if USE_FLASH_ATTN3:
         hidden_states = flash_attn_func(query, key, value, causal=False, deterministic=False)[0]
     elif USE_VANILLA_ATTN:
-        hidden_states = F.scaled_dot_product_attention(query, key, value, dropout_p=0.0, is_causal=False)
+        hidden_states = F.scaled_dot_product_attention(query.permute(0,2,1,3), key.permute(0,2,1,3), value.permute(0,2,1,3), dropout_p=0.0, is_causal=False).permute(0,2,1,3)
     else:
         hidden_states = flash_attn_func(query, key, value, dropout_p=0., causal=False)
     hidden_states = hidden_states.flatten(-2)
