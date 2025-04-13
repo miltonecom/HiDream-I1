@@ -1,5 +1,5 @@
 # HiDream-I1
-
+(Mac OS Apple Silicon) Support
 ![HiDream-I1 Demo](assets/demo.jpg)
 
 
